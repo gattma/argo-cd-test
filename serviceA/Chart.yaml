@@ -1,0 +1,7 @@
+apiVersion: v2
+name: quarkus-service-a
+version: 1.0.0
+dependencies:
+  - name: quarkus
+    version: 0.0.3
+    repository: https://redhat-developer.github.io/redhat-helm-charts
