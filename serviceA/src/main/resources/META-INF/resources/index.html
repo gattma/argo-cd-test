@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>serviceA - 1.0.0-SNAPSHOT</title>
+    <link rel="stylesheet" href="css/domarrow.css">
+    <script src="js/domarrow.js"></script>
+    <style>
+        #d1, #d2 {
+            position: absolute;
+            width: 150px;
+            height: 200px;
+            text-align: center;
+        }
+        #d1 {
+            border: 2px solid green;
+        }
+        #d2 {
+            left: 400px;
+            border: 2px solid blue;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="d1">
+        Namespace a
+        <hr>
+        <div id="serviceA" style="border: 1px solid;margin: 5px">
+            SERVICE A
+            <hr>
+            <div onclick="sayHelloFromA()" style="cursor: pointer;border: 1px solid lightgrey;margin: 2px">Say Hello</div>
+            <div id="callServiceB" onclick="callServiceBFromA()" style="cursor: pointer;border: 1px solid lightgrey;margin: 2px">Call Service B</div>
+            <div id="callServiceA2" onclick="callServiceA2FromA()" style="cursor: pointer;border: 1px solid lightgrey;margin: 2px">Call Service A2</div>
+        </div>
+        <div id="serviceA2" style="border: 1px solid;margin: 30px 5px 5px 5px">
+            SERVICE A2
+        </div>
+    </div>
+    <div id="d2">
+        Namespace b
+        <div id="serviceB" style="border: 1px solid;margin: 30px 5px 5px 5px">
+            SERVICE B
+            <hr>
+            <div onclick="sayHelloFromB()" style="cursor: pointer;border: 1px solid lightgrey;margin: 2px">Say Hello</div>
+            <div id="callServiceA" onclick="callServiceAFromB()" style="cursor: pointer;border: 1px solid lightgrey;margin: 2px">Call Service A</div>
+        </div>
+    </div>
+    <connection from="#callServiceB" to="#serviceB" color="red" fromX="1" toX="0" toY="0.5" tail></connection>
+    <connection from="#callServiceA2" to="#serviceA2" color="green" fromX="0.5" fromY="1" toX="0.5" toY="0" tail></connection>
+    <connection from="#callServiceA" to="#serviceA" color="red" fromX="0" toX="1" toY="0.5" tail></connection>
+
+    <div id="result" style="position: absolute;top: 250px;width: 100%">
+        <hr>
+        <textarea id="log" rows="10" cols="120" disabled></textarea>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        function callServiceBFromA() {
+            var logTxtArea = $('#log');
+            $.get( "/serviceA/callB", function( data ) {
+                logTxtArea.val(logTxtArea.val() + '\n' + data);
+            }).fail(function(jqXHR, textStatus, error) {
+                logTxtArea.val(logTxtArea.val() + '\nnot able to call Service B from Service A, reason: '+ jqXHR.status + ': ' + error);
+            });
+        }
+
+        function sayHelloFromA() {
+            var logTxtArea = $('#log');
+            $.get( "/serviceA/hello", function( data ) {
+                logTxtArea.val(logTxtArea.val() + '\n' + data);
+            }).fail(function(jqXHR, textStatus, error) {
+                logTxtArea.val(logTxtArea.val() + '\nnot able to call sayHello from Service A, reason: '+ jqXHR.status + ': ' + error);
+            });
+        }
+
+        function callServiceA2FromA() {
+            var logTxtArea = $('#log');
+            $.get( "/serviceA/callA2", function( data ) {
+                logTxtArea.val(logTxtArea.val() + '\n' + data);
+            }).fail(function(jqXHR, textStatus, error) {
+                logTxtArea.val(logTxtArea.val() + '\nnot able to call Service A2 from Service A, reason: '+ jqXHR.status + ': ' + error);
+            });
+        }
+
+        var HOST_SERVICE_B = "http://service-b-ns-b.apps.ocp.gp.local"
+
+        function sayHelloFromB() {
+            var logTxtArea = $('#log');
+            $.get( HOST_SERVICE_B + "/serviceB/hello", function( data ) {
+                logTxtArea.val(logTxtArea.val() + '\n' + data);
+            }).fail(function(jqXHR, textStatus, error) {
+                logTxtArea.val(logTxtArea.val() + '\nnot able to call sayHello from Service B, reason: '+ jqXHR.status + ': ' + error);
+            });
+        }
+
+        function callServiceAFromB() {
+            var logTxtArea = $('#log');
+            $.get( HOST_SERVICE_B + "/serviceB/callA", function( data ) {
+                logTxtArea.val(logTxtArea.val() + '\n' + data);
+            }).fail(function(jqXHR, textStatus, error) {
+                logTxtArea.val(logTxtArea.val() + '\nnot able to call Service A from Service B, reason: '+ jqXHR.status + ': ' + error);
+            });
+        }
+    </script>
+</body>
+</html>
